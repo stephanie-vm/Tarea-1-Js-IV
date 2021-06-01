@@ -1,19 +1,36 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-//Círculo
+let SqxPosition = 50; 
+let SqyPosition = 50;
+let SqxVelocidad = getRandomArbitrary(-15, 15);
+let SqyVelocidad = getRandomArbitrary(-15, 15);
 let CxPosition = 50;
 let CyPosition = 50;
 let CxVelocidad = getRandomArbitrary(-15, 15);
 let CyVelocidad = getRandomArbitrary(-15, 15);
-//Cuadrado
-let CdxPosition = 50;
-let CdyPosition = 50;
-let CdxVelocidad = getRandomArbitrary(-15, 15);
-let CdyVelocidad = getRandomArbitrary(-15, 15);
+const random = new randomValue(10, 20);
+// class square {
+//     constructor()
+// }
 
+function animationSquare() {
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(SqxPosition, SqyPosition, 100,100); 
+    if (SqxPosition + SqxVelocidad > canvas.width-100 || SqxPosition  < 0) {
+        SqxVelocidad = -SqxVelocidad;
+    }
+    
+    if (SqyPosition + SqyVelocidad > canvas.height-100 || SqyPosition < 0) {
+        SqyVelocidad = -SqyVelocidad;
+    }
+    CxPosition += CxVelocidad;
+    CyPosition += CyVelocidad; 
+    SqxPosition += SqxVelocidad;
+    SqyPosition += SqyVelocidad; 
+    window.requestAnimationFrame(animationSquare);
+}
 
-function animation() {
-    //Animación círculo
+function animationCircle() {
     ctx.clearRect(0, 0, canvas.width,canvas.height);
     ctx.beginPath();
     ctx.fillStyle = 'red';
@@ -29,25 +46,21 @@ function animation() {
     }
     CxPosition += CxVelocidad;
     CyPosition += CyVelocidad; 
-    //Animación cuadrado
-    ctx.fillStyle = 'blue';
-    ctx.fillRect(CdxPosition, CdyPosition, 100,100); 
-    if (CdxPosition + CdxVelocidad > canvas.width-100 || CdxPosition  < 0) {
-        CdxVelocidad = -CdxVelocidad;
-    }
-    
-    if (CdyPosition + CdyVelocidad > canvas.height-100 || CdyPosition < 0) {
-        CdyVelocidad = -CdyVelocidad;
-    }
-    CxPosition += CxVelocidad;
-    CyPosition += CyVelocidad; 
-    CdxPosition += CdxVelocidad;
-    CdyPosition += CdyVelocidad; 
-    window.requestAnimationFrame(animation);
+    window.requestAnimationFrame(animationCircle);
 }
 
-function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
+class randomValue {
+    constructor(min, max) {
+        this.min = min;
+        this.max = max;
+    }
+    result() {
+        return Math.random() * (max - min) + min;
+    }
 }
 
-window.requestAnimationFrame(animation); 
+
+window.requestAnimationFrame(animationCircle);
+window.requestAnimationFrame(animationSquare); 
+
+
