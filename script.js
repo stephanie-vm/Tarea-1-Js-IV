@@ -1,66 +1,122 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-let SqxPosition = 50; 
-let SqyPosition = 50;
-let SqxVelocidad = getRandomArbitrary(-15, 15);
-let SqyVelocidad = getRandomArbitrary(-15, 15);
-let CxPosition = 50;
-let CyPosition = 50;
-let CxVelocidad = getRandomArbitrary(-15, 15);
-let CyVelocidad = getRandomArbitrary(-15, 15);
-const random = new randomValue(10, 20);
-// class square {
-//     constructor()
-// }
+function init() {
+    //Varaiables generales, su uso se ejecuta en varias secciones del código
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
 
-function animationSquare() {
-    ctx.fillStyle = 'blue';
-    ctx.fillRect(SqxPosition, SqyPosition, 100,100); 
-    if (SqxPosition + SqxVelocidad > canvas.width-100 || SqxPosition  < 0) {
-        SqxVelocidad = -SqxVelocidad;
-    }
-    
-    if (SqyPosition + SqyVelocidad > canvas.height-100 || SqyPosition < 0) {
-        SqyVelocidad = -SqyVelocidad;
-    }
-    CxPosition += CxVelocidad;
-    CyPosition += CyVelocidad; 
-    SqxPosition += SqxVelocidad;
-    SqyPosition += SqyVelocidad; 
-    window.requestAnimationFrame(animationSquare);
-}
+    //Éstas variables están declaradas específicamente para el uso del cuadrado, sq= square
+    let SqxPosition = 50; 
+    let SqyPosition = 50;
+    let SqxVelocity = randomValues(-15, 15);
+    let SqyVelocity = randomValues(-15, 15);
 
-function animationCircle() {
-    ctx.clearRect(0, 0, canvas.width,canvas.height);
-    ctx.beginPath();
-    ctx.fillStyle = 'red';
-    ctx.arc(CxPosition, CyPosition,50, 0, 2 * Math.PI );
-    ctx.fill();
-    ctx.closePath();
-    if (CxPosition + CxVelocidad > canvas.width-50 || CxPosition + CxVelocidad < 50) {
-        CxVelocidad = -CxVelocidad;
-    }
-    
-    if (CyPosition + CyVelocidad > canvas.height-50 || CyPosition + CyVelocidad < 50) {
-        CyVelocidad = -CyVelocidad;
-    }
-    CxPosition += CxVelocidad;
-    CyPosition += CyVelocidad; 
-    window.requestAnimationFrame(animationCircle);
-}
+    //Éstas variables están declaradas específicamente para el uso del círculo, c= circle 
+    let CxPosition = 50;
+    let CyPosition = 50;
+    let CxVelocity = randomValues(-15, 15);
+    let CyVelocity = randomValues(-15, 15);
 
-class randomValue {
-    constructor(min, max) {
-        this.min = min;
-        this.max = max;
+    //  Ésta animación permite que el cuadrado rebote en cada uno de los laterales del canvas
+    function animationSquare() {
+        if (SqxPosition + SqxVelocity > canvas.width-100 || SqxPosition  < 0) {
+            SqxVelocity = -SqxVelocity;
+        }
+        
+        if (SqyPosition + SqyVelocity > canvas.height-100 || SqyPosition < 0) {
+            SqyVelocity = -SqyVelocity;
+        }
+        window.requestAnimationFrame(animationSquare);
     }
-    result() {
+
+    //  Ésta animación permite que el círculo rebote en cada uno de los laterales del canvas
+    function animationCircle() {
+        if (CxPosition + CxVelocity > canvas.width-50 || CxPosition + CxVelocity < 50) {
+            CxVelocity = -CxVelocity;
+        }
+        
+        if (CyPosition + CyVelocity > canvas.height-50 || CyPosition + CyVelocity < 50) {
+            CyVelocity = -CyVelocity;
+        }
+        window.requestAnimationFrame(animationCircle);
+    }
+    //  Función que ejecuta los objetos del cuadrado y el círculo
+    //  por medio de new y llama a sus respectivas funciones para crear las figuras en el 
+    //  canvas
+    function generalControlAnimation() {
+        ctx.clearRect(0, 0, canvas.width,canvas.height);
+        const square = new objectSquare(SqxPosition, SqyPosition, SqxVelocity, SqyVelocity);
+        const circle = new objectCircle(CxPosition, CyPosition, CxVelocity, CyVelocity);
+
+        square.createSquare();
+        circle.createCircle();
+        figuresCollision();
+        CxPosition += CxVelocity;
+        CyPosition += CyVelocity; 
+        SqxPosition += SqxVelocity;
+        SqyPosition += SqyVelocity; 
+
+        window.requestAnimationFrame(generalControlAnimation);
+    }
+    //Objeto para almacenar los valores del cuadrado, 
+    //se utiliza un método para relizar la acción de crear el cuadrado
+    class objectSquare {
+        constructor (SqxPosition, SqyPosition, SqxVelocidad, SqyVelocidad){
+            this.SqxPosition = SqxPosition;
+            this.SqyPosition = SqyPosition;
+            this.SqxVelocidad = SqxVelocidad;
+            this.SqyVelocidad = SqyVelocidad;
+        }
+        createSquare() {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(SqxPosition, SqyPosition, 100,100); 
+        }
+    }
+
+    //Objeto para almacenar los valores del círculo, 
+    //se utiliza un método para relizar la acción de crear el círculo
+    class objectCircle {
+        constructor (CxPosition, CyPosition, CxVelocidad, CyVelocidad) {
+            this.CxPosition = CxPosition;
+            this.CyPosition = CyPosition;
+            this.CxVelocidad = CxVelocidad;
+            this.CyVelocidad = CyVelocidad;
+        }
+        createCircle(){
+            ctx.beginPath();
+            ctx.fillStyle = 'red';
+            ctx.arc(CxPosition, CyPosition,50, 0, 2 * Math.PI );
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+    //función para la colisón entre figuras
+    function figuresCollision() {
+        let dx = CxPosition - CxPosition;
+        let dy = CyPosition - CyPosition;
+        let distance = Math.sqrt((dx * dx) + (dy * dy));
+
+        if (distance <= 100) {
+            if (Math.abs(dx)<= 100 && Math.abs(dx) > 75) {
+                SqxVelocity = -SqxVelocity;
+                CxVelocity = -CxVelocity;
+            }
+        }
+        if (Math.abs(dy)<= 100 && Math.abs(dy) > 75) {
+            SqyVelocity = -SqyVelocity;
+            CyVelocity = -CyVelocity;
+        }
+        window.requestAnimationFrame(figuresCollision); 
+    }
+    // ésta función genera valores random que después son utilizados
+    // en las coordenadas para generara posiciones diferentes de las figuras
+    // dentro del canvas
+    function randomValues (min, max) {
         return Math.random() * (max - min) + min;
     }
+    //Llamado para realizar las animaciones respectivas
+    window.requestAnimationFrame(animationSquare);  
+    window.requestAnimationFrame(animationCircle);
+    window.requestAnimationFrame(generalControlAnimation);
+    window.requestAnimationFrame(figuresCollision); 
 }
 
-
-window.requestAnimationFrame(animationCircle);
-window.requestAnimationFrame(animationSquare); 
-
-
+init();
